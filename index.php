@@ -1,18 +1,20 @@
 <?php
 session_start();
-if (!isset($_SESSION["username"])) {
+if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
 }
 include '../config/koneksi.php';
 
-$data = mysqli_query($conn, "SELECT * FROM kategori");
+$data = mysqli_query($conn, "SELECT produk.*, kategori.nama AS kategori_nama 
+                             FROM produk 
+                             JOIN kategori ON produk.kategori_id = kategori.id");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data Kategori</title>
+    <title>Data Produk</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,7 +26,7 @@ $data = mysqli_query($conn, "SELECT * FROM kategori");
             margin-bottom: 30px;
         }
         table {
-            width: 70%;
+            width: 90%;
             margin: auto;
             border-collapse: collapse;
             text-align: left;
@@ -41,10 +43,11 @@ $data = mysqli_query($conn, "SELECT * FROM kategori");
             color: white;
             padding: 5px 10px;
             border-radius: 4px;
+            margin-right: 5px;
         }
         .tambah {
             display: block;
-            width: 150px;
+            width: 180px;
             margin: 20px auto;
             text-align: center;
             background-color: #333;
@@ -55,6 +58,12 @@ $data = mysqli_query($conn, "SELECT * FROM kategori");
         }
         .tambah:hover {
             background-color: #555;
+        }
+        .edit {
+            background-color: #28a745;
+        }
+        .edit:hover {
+            background-color: #218838;
         }
         .hapus {
             background-color: #dc3545;
@@ -79,24 +88,28 @@ $data = mysqli_query($conn, "SELECT * FROM kategori");
     </style>
 </head>
 <body>
-    <h2>Data Kategori</h2>
+    <h2>Data Produk</h2>
 
-    <a class="tambah" href="tambah.php">+ Tambah Kategori</a>
+    <a class="tambah" href="tambah.php">+ Tambah Produk</a>
 
     <table>
         <tr>
             <th>No</th>
-            <th>Nama Kategori</th>
+            <th>Nama Produk</th>
+            <th>Kategori</th>
+            <th>Harga</th>
+            <th>Deskripsi</th>
             <th>Aksi</th>
         </tr>
-        <?php
-        $no = 1;
-        while ($row = mysqli_fetch_assoc($data)) {
-        ?>
+        <?php $no = 1; while ($row = mysqli_fetch_assoc($data)) { ?>
         <tr>
             <td><?= $no++; ?></td>
             <td><?= $row['nama']; ?></td>
+            <td><?= $row['kategori_nama']; ?></td>
+            <td><?= $row['harga']; ?></td>
+            <td><?= $row['deskripsi']; ?></td>
             <td class="aksi">
+                <a class="edit" href="edit.php?id=<?= $row['id']; ?>">Edit</a>
                 <a class="hapus" href="hapus.php?id=<?= $row['id']; ?>" onclick="return confirm('Yakin hapus?')">Hapus</a>
             </td>
         </tr>

@@ -6,16 +6,24 @@ if (!isset($_SESSION['username'])) {
 }
 include '../config/koneksi.php';
 
+$id = $_GET['id'];
+$data = mysqli_query($conn, "SELECT * FROM produk WHERE id='$id'");
+$produk = mysqli_fetch_assoc($data);
 $kategori = mysqli_query($conn, "SELECT * FROM kategori");
 
-if (isset($_POST['simpan'])) {
+if (isset($_POST['update'])) {
     $nama = $_POST['nama'];
     $kategori_id = $_POST['kategori_id'];
     $harga = $_POST['harga'];
     $deskripsi = $_POST['deskripsi'];
 
-    mysqli_query($conn, "INSERT INTO produk (nama, kategori_id, harga, deskripsi) 
-                         VALUES ('$nama', '$kategori_id', '$harga', '$deskripsi')");
+    mysqli_query($conn, "UPDATE produk SET 
+        nama='$nama',
+        kategori_id='$kategori_id',
+        harga='$harga',
+        deskripsi='$deskripsi'
+        WHERE id='$id'
+    ");
 
     header("Location: index.php");
     exit;
@@ -25,7 +33,7 @@ if (isset($_POST['simpan'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tambah Produk</title>
+    <title>Edit Produk</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -75,18 +83,19 @@ if (isset($_POST['simpan'])) {
 </head>
 <body>
     <div class="form-box">
-        <h2>Tambah Produk</h2>
+        <h2>Edit Produk</h2>
         <form method="POST">
-            <input type="text" name="nama" placeholder="Nama Produk" required>
+            <input type="text" name="nama" value="<?= $produk['nama']; ?>" required>
             <select name="kategori_id" required>
-                <option value="">-- Pilih Kategori --</option>
                 <?php while ($k = mysqli_fetch_assoc($kategori)) { ?>
-                    <option value="<?= $k['id']; ?>"><?= $k['nama']; ?></option>
+                    <option value="<?= $k['id']; ?>" <?= $k['id'] == $produk['kategori_id'] ? 'selected' : ''; ?>>
+                        <?= $k['nama']; ?>
+                    </option>
                 <?php } ?>
             </select>
-            <input type="number" name="harga" placeholder="Harga" required>
-            <textarea name="deskripsi" placeholder="Deskripsi Produk" rows="3" required></textarea>
-            <button type="submit" name="simpan">Simpan</button>
+            <input type="number" name="harga" value="<?= $produk['harga']; ?>" required>
+            <textarea name="deskripsi" rows="3" required><?= $produk['deskripsi']; ?></textarea>
+            <button type="submit" name="update">Update</button>
         </form>
         <a class="kembali" href="index.php">← Kembali</a>
     </div>
