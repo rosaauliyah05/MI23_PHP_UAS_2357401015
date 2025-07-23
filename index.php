@@ -1,53 +1,112 @@
 <?php
 session_start();
+if (!isset($_SESSION["username"])) {
+    header("Location: ../login.php");
+    exit;
+}
+include '../config/koneksi.php';
+
+$data = mysqli_query($conn, "SELECT * FROM kategori");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Selamat Datang</title>
+    <title>Data Kategori</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #dfe6e9, #b2bec3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            background: #fff;
+            padding: 40px;
         }
-        .container {
-            background-color: white;
-            padding: 30px 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        h2 {
             text-align: center;
+            margin-bottom: 30px;
         }
-        h1 {
-            color: #2d3436;
+        table {
+            width: 70%;
+            margin: auto;
+            border-collapse: collapse;
+            text-align: left;
         }
-        a {
+        th, td {
+            padding: 10px;
+            border: 1px solid #aaa;
+        }
+        th {
+            background-color: #eee;
+        }
+        .aksi a {
             text-decoration: none;
-            background-color: #0984e3;
             color: white;
-            padding: 10px 25px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 20px;
-            transition: background-color 0.3s;
+            padding: 5px 10px;
+            border-radius: 4px;
         }
-        a:hover {
-            background-color: #74b9ff;
+        .tambah {
+            display: block;
+            width: 150px;
+            margin: 20px auto;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+        .tambah:hover {
+            background-color: #555;
+        }
+        .hapus {
+            background-color: #dc3545;
+        }
+        .hapus:hover {
+            background-color: #c82333;
+        }
+        .kembali {
+            display: block;
+            width: 200px;
+            margin: 30px auto 0;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+        .kembali:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Selamat Datang di Sistem UAS PHP</h1>
-        <p>Silakan login untuk melanjutkan.</p>
-        <a href="login.php">Login Sekarang</a>
-    </div>
+    <h2>Data Kategori</h2>
+
+    <a class="tambah" href="tambah.php">+ Tambah Kategori</a>
+
+    <table>
+        <tr>
+            <th>No</th>
+            <th>Nama Kategori</th>
+            <th>Aksi</th>
+        </tr>
+        <?php
+        $no = 1;
+        while ($row = mysqli_fetch_assoc($data)) {
+        ?>
+        <tr>
+            <td><?= $no++; ?></td>
+            <td><?= $row['nama']; ?></td>
+            <td class="aksi">
+                <a class="hapus" href="hapus.php?id=<?= $row['id']; ?>" onclick="return confirm('Yakin hapus?')">Hapus</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+
+    <a class="kembali" href="../dashboard.php">← Kembali ke Dashboard</a>
+
+    <p style="text-align:center; margin-top:30px; font-size:14px; color:#777;">
+        Rosa Auliyah – 2357401015 – MI23
+    </p>
 </body>
 </html>
